@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>trublib — TAD Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0d0f0f;
+    --surface:  #131818;
+    --border:   #1e2a2a;
+    --amber:    #e8a020;
+    --amber-dim:#7a4f08;
+    --green:    #2ecc71;
+    --red:      #e74c3c;
+    --blue:     #3498db;
+    --text:     #c8d8d0;
+    --muted:    #4a6060;
+    --mono:     'Share Tech Mono', monospace;
+    --sans:     'Barlow', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  header {
+    padding: 24px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    color: var(--amber);
+    letter-spacing: 0.05em;
+  }
+
+  .logo span { color: var(--muted); }
+
+  .tagline {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .version {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--amber-dim);
+    border: 1px solid var(--amber-dim);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    flex: 1;
+    gap: 0;
+  }
+
+  /* ── LEFT PANEL ── */
+  .panel-left {
+    border-right: 1px solid var(--border);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    border: 1px dashed var(--muted);
+    border-radius: 4px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    background: rgba(232,160,32,0.02);
+  }
+
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--amber);
+    background: rgba(232,160,32,0.05);
+  }
+
+  .drop-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .drop-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+
+  .drop-text {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .drop-filename {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--amber);
+    margin-top: 8px;
+    word-break: break-all;
+  }
+
+  /* Config sliders */
+  .config-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .config-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text);
+  }
+
+  .config-label span { color: var(--amber); }
+
+  input[type=range] {
+    width: 100%;
+    appearance: none;
+    height: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--amber);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+
+  input[type=range]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--amber);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+
+  .config-hint {
+    font-size: 0.65rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* Process button */
+  .btn-process {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s, color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-process:hover:not(:disabled) {
+    background: var(--amber);
+    color: var(--bg);
+  }
+
+  .btn-process:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-process.loading {
+    color: var(--amber-dim);
+    border-color: var(--amber-dim);
+  }
+
+  /* ── RIGHT PANEL ── */
+  .panel-right {
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* Status bar */
+  .status-bar {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 38px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+    animation: none;
+  }
+
+  .status-dot.active { background: var(--amber); animation: blink 0.8s infinite; }
+  .status-dot.done   { background: var(--green); animation: none; }
+  .status-dot.error  { background: var(--red);   animation: none; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px;
+    border-radius: 2px;
+  }
+
+  .stat-value {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Confidence timeline */
+  .timeline-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 16px;
+  }
+
+  canvas#timeline {
+    width: 100%;
+    height: 100px;
+    display: block;
+    image-rendering: pixelated;
+  }
+
+  .timeline-legend {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot  { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
+
+  /* Audio players */
+  .audio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .audio-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 16px;
+  }
+
+  .audio-card-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+
+  audio {
+    width: 100%;
+    height: 32px;
+    accent-color: var(--amber);
+    filter: invert(0);
+  }
+
+  audio::-webkit-media-controls-panel { background: var(--border); }
+
+  .download-btn {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--amber-dim);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--amber-dim);
+    padding: 4px 10px;
+    border-radius: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .download-btn:hover {
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+
+  /* Transitions table */
+  .transitions-list {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .transition-badge {
+    padding: 3px 8px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.65rem;
+  }
+
+  .transition-badge.silent   { border-color: var(--muted);  color: var(--muted); }
+  .transition-badge.onset    { border-color: var(--blue);   color: var(--blue); }
+  .transition-badge.active   { border-color: var(--green);  color: var(--green); }
+  .transition-badge.trailing { border-color: #e67e22;       color: #e67e22; }
+
+  /* Empty state */
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+  }
+
+  .empty-state-icon { font-size: 3rem; opacity: 0.15; }
+  .empty-state-text { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; }
+
+  .hidden { display: none !important; }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--amber);
+    width: 0%;
+    transition: width 0.3s;
+    border-radius: 1px;
+  }
+
+  .progress-fill.indeterminate {
+    width: 30%;
+    animation: slide 1.2s infinite;
+  }
+
+  @keyframes slide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">trub<span>lib</span></div>
+  <div class="tagline">Trumpet Activity Detection</div>
+  <div class="version">v1.0.0-dev</div>
+</header>
+
+<main>
+
+  <!-- LEFT: controls -->
+  <aside class="panel-left">
+
+    <div>
+      <div class="section-label">Input</div>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept="audio/*,.wav,.mp3,.flac,.aiff,.aif,.ogg">
+        <div class="drop-icon">🎺</div>
+        <div class="drop-text">Drop audio file here<br>or click to browse</div>
+        <div class="drop-filename hidden" id="fileName"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">TAD Config</div>
+
+      <div class="config-row">
+        <div class="config-label">Threshold <span id="thresholdVal">0.60</span></div>
+        <input type="range" id="threshold" min="0" max="1" step="0.05" value="0.6">
+        <div class="config-hint">P(trumpet) cutoff. Higher = stricter detection.</div>
+      </div>
+
+      <div class="config-row">
+        <div class="config-label">Onset chunks <span id="onsetVal">3</span></div>
+        <input type="range" id="onsetChunks" min="1" max="8" step="1" value="3">
+        <div class="config-hint">Consecutive chunks needed to confirm onset (~240ms at 3).</div>
+      </div>
+
+      <div class="config-row">
+        <div class="config-label">Trailing chunks <span id="trailingVal">4</span></div>
+        <input type="range" id="trailingChunks" min="1" max="12" step="1" value="4">
+        <div class="config-hint">Hold-off before silencing after note ends (~320ms at 4).</div>
+      </div>
+    </div>
+
+    <button class="btn-process" id="processBtn" disabled>
+      ▶ &nbsp; Process
+    </button>
+
+  </aside>
+
+  <!-- RIGHT: results -->
+  <section class="panel-right">
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Waiting for input</span>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-state-icon">◎</div>
+      <div class="empty-state-text">Upload an audio file to begin</div>
+    </div>
+
+    <!-- Results (hidden until processed) -->
+    <div id="results" class="hidden" style="display:flex;flex-direction:column;gap:24px;">
+
+      <!-- Stats -->
+      <div>
+        <div class="section-label">Summary</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statDuration">—</div>
+            <div class="stat-label">Duration (s)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statRatio">—</div>
+            <div class="stat-label">Trumpet ratio</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statActive">—</div>
+            <div class="stat-label">Active chunks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statTotal">—</div>
+            <div class="stat-label">Total chunks</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confidence timeline -->
+      <div>
+        <div class="section-label">Confidence timeline</div>
+        <div class="timeline-container">
+          <canvas id="timeline"></canvas>
+          <div class="timeline-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--amber)"></div>
+              P(trumpet)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--green)"></div>
+              ACTIVE
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--blue)"></div>
+              ONSET
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#e67e22"></div>
+              TRAILING
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- State transitions -->
+      <div>
+        <div class="section-label">State transitions</div>
+        <div class="transitions-list" id="transitionsList"></div>
+      </div>
+
+      <!-- Audio players -->
+      <div>
+        <div class="section-label">Playback</div>
+        <div class="audio-grid">
+          <div class="audio-card">
+            <div class="audio-card-label">Original</div>
+            <audio id="originalAudio" controls></audio>
+          </div>
+          <div class="audio-card">
+            <div class="audio-card-label">TAD Output (trumpet only)</div>
+            <audio id="processedAudio" controls></audio>
+            <a id="downloadLink" class="download-btn hidden" download="tad_output.wav">
+              ↓ Download WAV
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</main>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────
+let selectedFile = null;
+
+// ── Elements ───────────────────────────────────────────────────────
+const fileInput     = document.getElementById('fileInput');
+const dropZone      = document.getElementById('dropZone');
+const fileName      = document.getElementById('fileName');
+const processBtn    = document.getElementById('processBtn');
+const statusDot     = document.getElementById('statusDot');
+const statusText    = document.getElementById('statusText');
+const emptyState    = document.getElementById('emptyState');
+const results       = document.getElementById('results');
+
+const threshold     = document.getElementById('threshold');
+const onsetChunks   = document.getElementById('onsetChunks');
+const trailingChunks= document.getElementById('trailingChunks');
+
+// ── Slider labels ──────────────────────────────────────────────────
+threshold.addEventListener('input', () => {
+  document.getElementById('thresholdVal').textContent = parseFloat(threshold.value).toFixed(2);
+});
+onsetChunks.addEventListener('input', () => {
+  document.getElementById('onsetVal').textContent = onsetChunks.value;
+});
+trailingChunks.addEventListener('input', () => {
+  document.getElementById('trailingVal').textContent = trailingChunks.value;
+});
+
+// ── File handling ──────────────────────────────────────────────────
+function handleFile(file) {
+  if (!file || !file.type.startsWith('audio/') && !file.name.match(/\.(wav|mp3|flac|aiff?|ogg|m4a|aac)$/i)) {
+    setStatus('error', 'Unsupported file type');
+    return;
+  }
+  selectedFile = file;
+  fileName.textContent = file.name;
+  fileName.classList.remove('hidden');
+  processBtn.disabled = false;
+  setStatus('idle', `Ready — ${file.name} (${(file.size/1024).toFixed(0)} KB)`);
+}
+
+fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+
+dropZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFile(e.dataTransfer.files[0]);
+});
+
+// ── Status helpers ─────────────────────────────────────────────────
+function setStatus(type, msg) {
+  statusDot.className = 'status-dot';
+  if (type === 'active') statusDot.classList.add('active');
+  if (type === 'done')   statusDot.classList.add('done');
+  if (type === 'error')  statusDot.classList.add('error');
+  statusText.textContent = msg;
+}
+
+// ── Process ────────────────────────────────────────────────────────
+processBtn.addEventListener('click', async () => {
+  if (!selectedFile) return;
+
+  processBtn.disabled = true;
+  processBtn.classList.add('loading');
+  processBtn.textContent = '⟳  Processing...';
+  setStatus('active', 'Converting and processing audio...');
+  emptyState.classList.add('hidden');
+  results.classList.add('hidden');
+
+  const form = new FormData();
+  form.append('file', selectedFile);
+  form.append('threshold', threshold.value);
+  form.append('onset_chunks', onsetChunks.value);
+  form.append('trailing_chunks', trailingChunks.value);
+
+  try {
+    const res = await fetch('/process', { method: 'POST', body: form });
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.detail || `HTTP ${res.status}`);
+    }
+
+    renderResults(data);
+    setStatus('done', `Done — ${data.stats.active_chunks} active chunks detected`);
+
+  } catch (err) {
+    setStatus('error', `Error: ${err.message}`);
+    emptyState.classList.remove('hidden');
+    console.error(err);
+  } finally {
+    processBtn.disabled = false;
+    processBtn.classList.remove('loading');
+    processBtn.innerHTML = '▶ &nbsp; Process';
+  }
+});
+
+// ── Render results ─────────────────────────────────────────────────
+function renderResults(data) {
+  const { stats, chunks_meta, output_audio_b64, original_audio_b64 } = data;
+
+  // Stats
+  document.getElementById('statDuration').textContent = stats.duration_sec;
+  document.getElementById('statRatio').textContent    = (stats.trumpet_ratio * 100).toFixed(1) + '%';
+  document.getElementById('statActive').textContent   = stats.active_chunks;
+  document.getElementById('statTotal').textContent    = stats.total_chunks;
+
+  // Audio players
+  const origBlob = b64ToBlob(original_audio_b64, 'audio/wav');
+  const procBlob = b64ToBlob(output_audio_b64, 'audio/wav');
+
+  document.getElementById('originalAudio').src  = URL.createObjectURL(origBlob);
+  document.getElementById('processedAudio').src = URL.createObjectURL(procBlob);
+
+  const dl = document.getElementById('downloadLink');
+  dl.href = URL.createObjectURL(procBlob);
+  dl.classList.remove('hidden');
+
+  // Confidence timeline
+  drawTimeline(chunks_meta);
+
+  // State transitions
+  const tList = document.getElementById('transitionsList');
+  tList.innerHTML = '';
+  stats.state_transitions.forEach(t => {
+    if (!t.from) return;
+    const badge = document.createElement('div');
+    badge.className = `transition-badge ${t.to}`;
+    badge.textContent = `${t.time_sec}s → ${t.to}`;
+    tList.appendChild(badge);
+  });
+
+  results.classList.remove('hidden');
+  results.style.display = 'flex';
+}
+
+// ── Timeline canvas ────────────────────────────────────────────────
+function drawTimeline(chunks) {
+  const canvas = document.getElementById('timeline');
+  const dpr    = window.devicePixelRatio || 1;
+  const W      = canvas.parentElement.clientWidth - 32;
+  const H      = 100;
+
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const n = chunks.length;
+
+  // Background grid
+  ctx.strokeStyle = '#1e2a2a';
+  ctx.lineWidth = 1;
+  for (let y = 0; y <= 4; y++) {
+    ctx.beginPath();
+    ctx.moveTo(0, y * H / 4);
+    ctx.lineTo(W, y * H / 4);
+    ctx.stroke();
+  }
+
+  // State background bands
+  const stateColors = {
+    silent:   'rgba(74,96,96,0.15)',
+    onset:    'rgba(52,152,219,0.15)',
+    active:   'rgba(46,204,113,0.15)',
+    trailing: 'rgba(230,126,34,0.15)',
+  };
+
+  chunks.forEach((c, i) => {
+    const x = i / n * W;
+    const w = W / n + 1;
+    ctx.fillStyle = stateColors[c.state] || 'transparent';
+    ctx.fillRect(x, 0, w, H);
+  });
+
+  // Threshold line
+  const threshY = H - parseFloat(threshold.value) * H;
+  ctx.strokeStyle = 'rgba(232,160,32,0.3)';
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, threshY);
+  ctx.lineTo(W, threshY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Confidence curve
+  ctx.strokeStyle = '#e8a020';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  chunks.forEach((c, i) => {
+    const x = (i / n) * W;
+    const y = H - c.confidence * H;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Filled area under curve
+  ctx.fillStyle = 'rgba(232,160,32,0.08)';
+  ctx.beginPath();
+  chunks.forEach((c, i) => {
+    const x = (i / n) * W;
+    const y = H - c.confidence * H;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(W, H);
+  ctx.lineTo(0, H);
+  ctx.closePath();
+  ctx.fill();
+
+  // Threshold label
+  ctx.fillStyle = 'rgba(232,160,32,0.5)';
+  ctx.font = `9px 'Share Tech Mono', monospace`;
+  ctx.fillText(`θ=${threshold.value}`, 4, threshY - 4);
+}
+
+// ── Utility ────────────────────────────────────────────────────────
+function b64ToBlob(b64, type) {
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type });
+}
+</script>
+</body>
+</html>
