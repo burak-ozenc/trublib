@@ -6,6 +6,10 @@ This document describes how to build a dataset, extract features, train the clas
 
 ## Overview
 
+> **Dataset attribution and licensing:** see [`docs/data.md`](data.md) for the full list of training data sources, their licenses, and the resulting usage constraints on the model weights.
+
+
+
 The classifier is a scikit-learn MLP (256→128, relu, adam) wrapped in a StandardScaler pipeline and exported to ONNX via skl2onnx. It receives a 106-dimensional feature vector (mean + std of 53 features over one 80 ms chunk) and outputs P(trumpet).
 
 **The single most important constraint:** training and inference must use the **same pooling window** — one 80 ms chunk = ~7 frames. Training on longer windows (5 s, full file) collapses std features to zero at inference and the model fails silently. This was the root cause of the original train/inference mismatch bug.

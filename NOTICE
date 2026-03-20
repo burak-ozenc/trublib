@@ -1,0 +1,24 @@
+trublib
+Copyright (c) 2025 Burak
+
+This repository's source code is licensed under the MIT License.
+See LICENSE for the full text.
+
+---
+
+The trained model weights bundled with this package
+(trublib/models/trumpet_scorer_v1.onnx) were derived from datasets
+that carry NonCommercial upstream license terms, including:
+
+  - IRMAS (CC BY-NC-SA 3.0)
+  - ESC-50 (CC BY-NC)
+  - good-sounds (CC BY-NC 4.0)
+
+Accordingly, the model weights are subject to those upstream restrictions
+and must be treated as non-commercial / research / educational use only.
+
+The MIT license applies to the source code only and does not override
+the upstream data licenses that govern the trained model.
+
+See docs/data.md for full attribution, source links, and per-dataset
+license details.

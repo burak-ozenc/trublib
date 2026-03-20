@@ -166,4 +166,11 @@ For retraining the classifier on your own data, see [`docs/training.md`](docs/tr
 
 ## Licence
 
-MIT
+**Source code:** MIT
+
+**Bundled model weights:** Non-commercial / research / educational use only.
+The model was trained on datasets that carry NonCommercial upstream terms (IRMAS, ESC-50, good-sounds).
+See [`docs/data.md`](docs/data.md) for full attribution and [`NOTICE`](NOTICE) for the summary.
+
+To produce commercially-usable weights, retrain using only CC0 / CC BY sources.
+See [`docs/training.md`](docs/training.md) for instructions.
