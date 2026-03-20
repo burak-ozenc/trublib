@@ -33,22 +33,20 @@ Original recordings made specifically for this project. No license restrictions.
 
 Individual Freesound tracks carry their own per-file license (CC0, CC BY, CC BY-NC, etc.). Each pack page lists the license per file. All packs below were used for non-commercial training; verify per-file licenses before commercial use.
 
-| Pack | Freesound ID | Uploader | Content | Provenance note |
-|---|---|---|---|---|
-| Chord-Scale Dataset | [24075](https://freesound.org/people/emirdemirel/packs/24075/) | [emirdemirel](https://freesound.org/people/emirdemirel/) | Scale patterns | Verify per-file license |
-| Blown Sounds | [19198](https://freesound.org/people/FullMetalJedi/packs/19198/) | [FullMetalJedi](https://freesound.org/people/FullMetalJedi/) | Mixed blown sounds | Audit content — not all clips are trumpet |
-| Trumpet samples VG Trumpet soft | [13522](https://freesound.org/people/Vlad99/packs/13522/) | [Vlad99](https://freesound.org/people/Vlad99/) | Single notes | ⚠ Provenance caveat — appears linked to VG Trumpet commercial sample library. Treat as reference-quality only; exclude from commercial retraining. |
-| Trumpet | [35283](https://freesound.org/people/KhalDrogo12/packs/35283/) | [KhalDrogo12](https://freesound.org/people/KhalDrogo12/) | Single notes, phrases | Verify per-file license |
-| Trumpet Fanfares From Sensible to Silly | [23284](https://freesound.org/people/joepayne/packs/23284/) | [joepayne](https://freesound.org/people/joepayne/) | Fanfares | Verify per-file license |
-| Pablo_Project trumpet overall quality of single note | [15850](https://freesound.org/people/fuannnakimochi/packs/15850/) | [fuannnakimochi](https://freesound.org/people/fuannnakimochi/) | Single notes | Verify per-file license |
-| Trumpet Sound Pack | [35307](https://freesound.org/people/KhalDrogo12/packs/35307/) | [KhalDrogo12](https://freesound.org/people/KhalDrogo12/) | Phrases | Verify per-file license |
-| VSCO 2 CE — Trumpet sustain | [21050](https://freesound.org/people/sgossner/packs/21050/) | [sgossner](https://freesound.org/people/sgossner/) | Sustain notes | VSCO 2 Community Edition — CC0 |
-| VSCO 2 CE — Trumpet vibrato sustain | [21051](https://freesound.org/people/sgossner/packs/21051/) | [sgossner](https://freesound.org/people/sgossner/) | Vibrato sustain | VSCO 2 CE — CC0 |
-| VSCO 2 CE — Trumpet staccato | [21048](https://freesound.org/people/sgossner/packs/21048/) | [sgossner](https://freesound.org/people/sgossner/) | Staccato | VSCO 2 CE — CC0 |
-| VSCO 2 CE — Trumpet straight mute sustain | [21049](https://freesound.org/people/sgossner/packs/21049/) | [sgossner](https://freesound.org/people/sgossner/) | Muted sustain | VSCO 2 CE — CC0 |
-| VSCO 2 CE — Trumpet harmon mute sustain | [21047](https://freesound.org/people/sgossner/packs/21047/) | [sgossner](https://freesound.org/people/sgossner/) | Harmon mute | VSCO 2 CE — CC0 |
-
-**Excluded:** `19911__bevibeldesign__rhinoceros-trumpeting-sounds` — animal vocalization, not a brass instrument.
+| Pack | Freesound ID | Uploader | Content |
+|---|---|---|---|
+| Chord-Scale Dataset | [24075](https://freesound.org/people/emirdemirel/packs/24075/) | [emirdemirel](https://freesound.org/people/emirdemirel/) | Scale patterns |
+| Blown Sounds | [19198](https://freesound.org/people/FullMetalJedi/packs/19198/) | [FullMetalJedi](https://freesound.org/people/FullMetalJedi/) | Mixed blown sounds |
+| Trumpet samples VG Trumpet soft | [13522](https://freesound.org/people/Vlad99/packs/13522/) | [Vlad99](https://freesound.org/people/Vlad99/) | Single notes |
+| Trumpet | [35283](https://freesound.org/people/KhalDrogo12/packs/35283/) | [KhalDrogo12](https://freesound.org/people/KhalDrogo12/) | Single notes, phrases |
+| Trumpet Fanfares From Sensible to Silly | [23284](https://freesound.org/people/joepayne/packs/23284/) | [joepayne](https://freesound.org/people/joepayne/) | Fanfares |
+| Pablo_Project trumpet overall quality of single note | [15850](https://freesound.org/people/fuannnakimochi/packs/15850/) | [fuannnakimochi](https://freesound.org/people/fuannnakimochi/) | Single notes |
+| Trumpet Sound Pack | [35307](https://freesound.org/people/KhalDrogo12/packs/35307/) | [KhalDrogo12](https://freesound.org/people/KhalDrogo12/) | Phrases |
+| VSCO 2 CE — Trumpet sustain | [21050](https://freesound.org/people/sgossner/packs/21050/) | [sgossner](https://freesound.org/people/sgossner/) | Sustain notes |
+| VSCO 2 CE — Trumpet vibrato sustain | [21051](https://freesound.org/people/sgossner/packs/21051/) | [sgossner](https://freesound.org/people/sgossner/) | Vibrato sustain |
+| VSCO 2 CE — Trumpet staccato | [21048](https://freesound.org/people/sgossner/packs/21048/) | [sgossner](https://freesound.org/people/sgossner/) | Staccato |
+| VSCO 2 CE — Trumpet straight mute sustain | [21049](https://freesound.org/people/sgossner/packs/21049/) | [sgossner](https://freesound.org/people/sgossner/) | Muted sustain |
+| VSCO 2 CE — Trumpet harmon mute sustain | [21047](https://freesound.org/people/sgossner/packs/21047/) | [sgossner](https://freesound.org/people/sgossner/) | Harmon mute |
 
 ### IRMAS
 
