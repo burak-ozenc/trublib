@@ -36,10 +36,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage       = "https://github.com/your-org/trublib"
-Documentation  = "https://github.com/your-org/trublib/tree/main/docs"
-Repository     = "https://github.com/your-org/trublib"
-"Bug Tracker"  = "https://github.com/your-org/trublib/issues"
+Homepage       = "https://github.com/burak-ozenc/trublib"
+Documentation  = "https://github.com/burak-ozenc/trublib/tree/main/docs"
+Repository     = "https://github.com/burak-ozenc/trublib"
+"Bug Tracker"  = "https://github.com/burak-ozenc/trublib/issues"
 
 [project.optional-dependencies]
 dev = [
